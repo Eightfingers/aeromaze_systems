@@ -1,0 +1,9 @@
+services:
+  fastlio_aligned:
+    image: eightfingers123/fast-lio-gravity-aligned:arm64
+    container_name: fastlio_aligned
+    ipc: host
+    network_mode: host
+    command: bash -c "source ~/sutd_ws/devel/setup.bash && cd /sutd_ws/scripts/ && stdbuf -o L roslaunch aligned_mapping_mid360.launch"
+    volumes:
+      - ./core_scripts/:/sutd_ws/scripts/

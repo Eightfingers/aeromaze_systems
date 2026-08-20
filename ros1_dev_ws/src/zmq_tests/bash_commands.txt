@@ -1,0 +1,7 @@
+# Additional 100 ms latency simulation and 10% packet loss at loopback (localhost)
+sudo tc qdisc add dev lo root netem delay 100ms loss 10%
+
+# reset back to normal
+sudo tc qdisc del dev lo root
+
+docker build -f Dockerfile --platform linux/arm64/v8 . -t eightfingers123/ros2_scripts

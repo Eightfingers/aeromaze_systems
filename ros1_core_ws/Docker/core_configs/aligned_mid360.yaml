@@ -1,0 +1,16 @@
+imu2lidar:
+    extrinsic_T: [ 0, 0, 0.10]
+    # Flip by 180 degree around z-axis 
+    extrinsic_R: [ -1,  0, 0,
+                    0, -1, 0,
+                    0,  0, 1]
+
+    # 180 deg Z-turn followed by -20 deg Y-pitch
+    # extrinsic_R: [ -0.9397,   0.0000,  -0.3420,
+    #                 0.0000,  -1.0000,   0.0000,
+    #             -0.3420,   0.0000,   0.0000 ] # Note: Last element is 0.9397
+
+    # # 180 deg Z-turn followed by +20 deg Y-pitch (Extrinsic)
+    # extrinsic_R: [ -0.9397,   0.0000,   0.3420,
+    #                 0.0000,  -1.0000,   0.0000,
+    #                 0.3420,   0.0000,   0.9397 ]

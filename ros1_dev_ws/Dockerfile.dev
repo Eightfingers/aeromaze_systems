@@ -1,0 +1,49 @@
+# Start with the official ROS noetic base image
+FROM --platform=linux/arm64 ros:noetic-ros-base
+# FROM ros:noetic-ros-base
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install necessary dependencies
+RUN apt-get update
+
+RUN apt-get install -y --no-install-recommends \
+  git \
+  python3-pip \
+  build-essential \
+  nano \
+  vim \
+  ros-noetic-mavros-msgs \
+  ros-noetic-tf2 \
+  ros-noetic-tf \
+  ros-noetic-tf2-sensor-msgs \
+  ros-noetic-tf2-geometry-msgs \
+  ros-noetic-pcl-ros \
+  ros-noetic-cv-bridge \
+  && rm -rf /var/lib/apt/lists/*
+#  APT stores downloaded package index files in /var/lib/apt/lists/. 
+#  After installation, these are no longer needed.
+
+# Install Python packages and pyzmq
+RUN pip3 install --upgrade pip setuptools wheel \
+ && pip3 install --upgrade numpy \
+ && pip3 install pyzmq ping3
+
+RUN pip3 install scipy
+# Set up the workspace in the container
+WORKDIR /workspace
+
+# Copy ROS package into the workspace
+COPY src/ /workspace/src
+
+# Build workspace
+WORKDIR /workspace
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
+
+# Set up the workspace
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc && \
+    echo "source /workspace/devel/setup.bash" >> ~/.bashrc
+
+# entry point script
+COPY entrypoint_noetic.sh /entrypoint_noetic.sh 
+
+ENTRYPOINT ["/bin/bash", "/entrypoint_noetic.sh"]

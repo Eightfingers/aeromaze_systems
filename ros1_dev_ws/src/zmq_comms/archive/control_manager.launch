@@ -1,0 +1,6 @@
+<launch>
+
+    <node pkg="zmq_comms" type="control_manager.py" name="control_manager" output="screen">
+    <env name="PYTHONUNBUFFERED" value="1"/>
+    </node>
+</launch>

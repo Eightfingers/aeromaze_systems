@@ -1,0 +1,9 @@
+<launch>
+
+	<rosparam command="load" file="$(find data_manager)/config/aligned_mid360.yaml" />
+    <node pkg="data_manager" type="data_manager_aligned" name="data_manager_aligned" output="screen" > 
+        <remap from="odom_mavros"   to="/mavros/vision_pose/pose_aligned"/>
+        <remap from="/fastlio_odometry"   to="/Odometry"/>
+    </node>
+    
+</launch>

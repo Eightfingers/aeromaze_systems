@@ -1,0 +1,14 @@
+services:
+  systems_core:
+    image: eightfingers123/systems_core:arm64
+    # restart: unless-stopped
+    network_mode: host
+    entrypoint: /root/scripts/old.sh
+    environment:
+      - TZ=Asia/Singapore
+    volumes:
+      - ./core_scripts/:/root/scripts/
+      - ./core_configs/:/root/configs/
+    # cpuset: "0"
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0

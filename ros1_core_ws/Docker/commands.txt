@@ -1,0 +1,126 @@
+build  (cross platform)
+docker run --privileged --rm tonistiigi/binfmt --install all
+docker buildx create --use
+
+dev
+docker build -f Dockerfile.dev --platform linux/arm64/v8 . -t eightfingers123/aeromaze_systems_dev:arm64
+docker build -f Dockerfile.dev . -t eightfingers123/aeromaze_systems_dev:arm64
+docker push eightfingers123/aeromaze_systems_dev:arm64
+
+core
+docker build -f Dockerfile.core --platform linux/arm64/v8 . -t eightfingers123/aeromaze_systems_core:arm64
+docker build -f Dockerfile.core . -t eightfingers123/aeromaze_systems_core:arm64
+docker push eightfingers123/aeromaze_systems_core:arm64
+
+docker build -f Dockerfile . -t eightfingers123/aeromaze_systems_dev:arm64
+docker build -f Dockerfile.core . -t eightfingers123/aeromaze_systems_core:arm64
+
+tag
+dockeclr image tag eightfingers123/ros1_zmq_tests:latest eightfingers123/ros1_zmq_tests:arm64
+
+docker image tag eightfingers123/ros1_zmq_tests:latest eightfingers123/ros1_zmq_tests:arm64
+
+
+push
+docker push eightfingers123/ros1_zmq_tests:arm64
+
+run with args2
+docker run -it --ipc=host --network=host --name=comms --env=206.env  eightfingers123/ros1_zmq_tests
+docker run -it --ipc=host --network=host --name=fastlio_gravity --env=206.env  eightfingers123/fast-lio-gravity-aligned
+docker exec -it comms /bin/bash
+
+docker run -it --ipc=host --network=host --name=core --env=206.env  --volume=./scripts/:/root/scripts/ --volume=./configs/:/root/configs/  eightfingers123/systems_core:arm64
+
+compose up
+docker comose -f flight_manager_compose.yaml up 
+docker comose -f comms_compose.yaml up 
+
+set static ip addr for ethernet transfer, 4 5 6 corresponds to drone 1 2 3 
+sudo nmcli con add type ethernet con-name direct-link ifname enx34298f7371d6 ip4 192.168.1.3/24 
+sudo nmcli con add type ethernet con-name direct-link ifname eth1 ip4 192.168.1.4/24
+sudo nmcli con up direct-link
+
+ibss
+set -e
+
+IFACE="wlo1" # Change interface to the one on your computer
+SSID="aeromazeibss"
+FREQ="2437"
+IPADDR="192.168.65.46/24"
+
+echo "[*] Stopping NetworkManager and wpa_supplicant..."
+sudo systemctl stop NetworkManager || true
+sudo systemctl stop wpa_supplicant || true
+
+echo "[*] Bringing interface down..."
+sudo ip link set "$IFACE" down
+
+echo "[*] Switching interface to IBSS (ad-hoc) mode..."
+sudo iw "$IFACE" set type ibss
+
+echo "[*] Bringing interface up..."
+sudo ip link set "$IFACE" up
+
+echo "[*] Joining IBSS network \"$SSID\" on $FREQ MHz..."
+sudo iw "$IFACE" ibss join "$SSID" "$FREQ"
+
+echo "[*] Assigning IP address $IPADDR..."
+sudo ip addr add "$IPADDR" dev "$IFACE" || true
+
+echo "[+] IBSS network configured!"
+
+ntpdate stuff
+sudo apt install ntpdate
+sudo ntpdate -u time.google.com
+sudo vim /etc/systemd/system/sync-time.service
+sudo systemctl daemon-reload // reload
+sudo systemctl enable aeromaze_startup.service // enable on every boot
+sudo systemctl start aeromaze_startup.service // test it without rebooting
+
+https_proxy (some weird ass environment variable that exists somwhere in x280)
+unset https_proxy 
+
+cpu_monitor.
+8 cores in nvidia orin nx.
+For a single node, if it display 30% cpu usage means its using a 30% of a single core. Therefore there is 800% of total cpu compute to be used.
+When it comes to total usage, it computes 100% out of 800%. i.e. 50% refers to  400%/800% of cpu compute is being used. 
+
+dont rosbag record -a 
+bag specific topics since it consumse cpu power and rosbag record -a will trigger some error on the realsense node causing it to throttle further.
+use the one under aeromaze.bag to rosbag record 
+
+set docker process id such that it is trackable by host 
+--pid=host To Set through DockerFile
+
+rosbag record -a might take up alot of cpu power.
+
+rosbag record calib_stuff
+alias rosbaglivoxcamcalib='rosbag record /livox/lidar /livox/imu /cloud_registered_body /camera/color/camera_info /camera/color/image_raw'
+
+rosbag record actual_stuff
+alias rosbagrecordaeromaze='bash ~/record_aeromaze.sh'
+#!/bin/bash
+
+# Define the agent ID (change this to 003, 004, etc.)
+AGENT_ID="003"
+
+# Record topics using the variable
+rosbag record \
+  /agent${AGENT_ID}/action \
+  /agent${AGENT_ID}/detection_results_raw \
+  /agent${AGENT_ID}/global_position/pose \
+  /agent${AGENT_ID}/grid_map/occupancy \
+  /agent${AGENT_ID}/plan_array \
+  /agent${AGENT_ID}/string \
+  /agent${AGENT_ID}/waypoint \
+  /drone_self/offset_pose \
+  /camera/color/image_raw_throttled \
+  /cpu_monitor/total_cpu \
+  /livox/lidar \
+  /livox/imu \
+  /mavros/setpoint_raw/local \
+  /mavros/local_position/pose \
+  /mavros/local_position/velocity_local
+
+rosbag record /aligned_fastlio_odometry /fastlio_odom /livox/imu \
+/mavros/imu/data /livox/lidar /mavros/vision_pose/pose /mavros/vision_pose/pose_aligned /mavros/local_position/pose /vrpn_client_node/UAV2/pose

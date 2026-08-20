@@ -1,0 +1,7 @@
+build/*
+devel/*
+logs/*
+.catkin_tools/
+.vscode/
+Docker/env/this.env
+Docker/core_configs/this_MID360_config.json

@@ -1,0 +1,46 @@
+Legacy code is monolithic in nature. 
+- Single unit of deployment
+- Running as a single service. 
+- Low fault tolerance with scaling limitations
+- Lock into a particular technology stack
+- Common libraries to many applications
+
+Container 
+- Standardised unit for development, deployment and distribution of application
+- Programming language runtimes
+- Executables, binary code, libraries and config files.
+- Immutable, does not change once its built. 
+- Runs as a single Unix process.
+- Disposable and safe to scale up/down at anytime
+
+Containers vs Virtual Machines
+- Management layer -> Hypervisor for VMS, Container run time for Containers
+
+Docker Runtime
+- Docker Enginer
+- Container runtime
+- long running server process aka Docker Daemon. dockerd, in unix
+- Commands REST API to Docker RUNTIME	
+
+Docker CLI
+- docker (command) container (context) run (task) hello-world(Image)
+- docker image ls <--> docker images
+- docker(command) container(context) run(task) alpine(Image) echo hello there!(app command)
+- docker container run --name myapp (flags before image) alpine echo hello world (commands after image)
+- docker container prune (remove all stopped containers)
+- 
+
+Exposing docker containers
+- Containers have port too.
+- docker container run -d -p 8080:80 (8080 is localhost directs to container port 80) httpd
+ 
+Creating an Image
+- Config file using Dockerfile, then use 'docker build'
+- FROM specify base image, first instruction on the dockerfile
+- COPY copies everything from a specified directory to a destination directory
+- WORKDIR go to specified directory
+- CMD default command that runs when starting the container
+- 'docker image build . -t image_name:image_tag'
+- Dont use latest tag, have a certain naming standardisation
+- 
+

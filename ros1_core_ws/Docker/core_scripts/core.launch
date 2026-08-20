@@ -1,0 +1,17 @@
+<launch>
+    <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch"/>
+	<include file="/root/scripts/px4.launch"/> 
+	<include file="/root/scripts/msg_MID360.launch"/>  
+	<include file="/root/scripts/mapping_mid360.launch"/>
+	<include file="/root/scripts/data_manager_start.launch"/>
+
+	<node pkg="tf2_ros" type="static_transform_publisher" name="tf_map_to_uavworld_identity_static" args="0 0 0 0 0 0 map uav_world" />
+	<node pkg="tf2_ros" type="static_transform_publisher" name="tf_body_to_lioworld_identity_static" args="0 0 0 0 0 0 body lio_world" />
+	<node pkg="tf2_ros" type="static_transform_publisher" name="tf_map_to_odom_identity_static" args="0 0 0 0 0 0 map odom" />
+
+    <!-- Base link to livox frame -->
+	<!-- X,Y,Z, Yaw pitch roll      -->
+	<node pkg="tf2_ros" type="static_transform_publisher" name="tf_base_link_to_livox_frame" args="0 0 0.11 3.141593 -0.365 -0.024 base_link livox_frame" />
+	<!-- <node pkg="tf2_ros" type="static_transform_publisher" name="tf_base_link_to_livox_frame" args="0 0 0.11 0.0 -0.365 -0.024 base_link livox_frame" /> -->
+
+</launch>

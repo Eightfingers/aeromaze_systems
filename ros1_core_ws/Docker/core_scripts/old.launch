@@ -1,0 +1,17 @@
+<launch>
+    <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch"/>
+	<include file="/root/scripts/px4.launch"/> 
+	<include file="/root/scripts/msg_MID360.launch"/>  
+	<include file="/root/scripts/mapping_mid360.launch"/>
+	<!-- <include file="/root/scripts/data_manager_start.launch"/> -->
+
+	<!-- X,Y,Z, Yaw pitch roll      -->
+	<!-- <node pkg="tf2_ros" type="static_transform_publisher" name="tf_map_to_odom_identity_static" args="0 0 0 0 0 0 map odom" /> -->
+	<!-- <node pkg="tf2_ros" type="static_transform_publisher" name="tf_livox_to_camera_identity_static" args="0 0 0.10 3.141593 0.0 0.0 map camera_init" /> -->
+
+	<node pkg="tf2_ros" type="static_transform_publisher" name="tf_map_to_camera_init_static" args="0 0 0.10 3.141593 -0.365391 0 map camera_init" />
+	<node pkg="tf2_ros" type="static_transform_publisher" name="tf_body_to_livox_identity_static" args="0 0 0 0 0 0 body livox_frame" />
+	<!-- <node pkg="tf2_ros" type="static_transform_publisher" name="tf_map_to_camera_init_static" 
+      args="0.046263 0.005615 0.113574 3.141593 0.365391 0.003310 map camera_init" /> -->
+
+</launch>

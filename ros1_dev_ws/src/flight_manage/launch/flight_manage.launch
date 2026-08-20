@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="flight_manage" type="control_manager.py" name="control_manager_py" output="screen">
+    </node>
+</launch>

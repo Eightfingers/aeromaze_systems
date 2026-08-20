@@ -1,0 +1,43 @@
+1) On the computer that is running the ansible commands, create a .env file for each drone
+2) Using ansible, For each host, push the custom .env file into them.
+3) Usiing ansible, load the environment variables into the drones.
+4) Using ansible, load the same environment variables into the containers.
+5) ROSlaunch should just be a single file, read from environment variables its own IP, number of drones.
+
+environment variables
+- OWN IP, NUMBER OF DRONES, 4th OCTET, 3rd OCTET, HOST MASTER COMPUTER, LOCAL DOCKER SERVER
+
+
+docker run -it --ipc=host --network=host eightfingers123/ros1_zmq_tests
+docker run -it --ipc=host --network=host temasekliu/hydra_arm:Apr4_199
+
+
+sudo systemctl stop NetworkManager
+sudo systemctl stop wpa_supplicant
+sudo ip link set wlan0 down
+sudo iw wlan0 set type ibss
+sudo ip link set wlan0 up
+sudo iw wlan0 ibss join aeromazeibss 2437
+sudo ip addr add 192.168.65.196/24 dev wlan0
+
+iperf3  physical tests
+- Test ping of 3 drones on 3 different MPH locations 
+- Test ping of 3 drones on 3 different MPH locations
+- Test on the floor LOS in MPH, DRONE TO DRONE
+- Test on the floor SOME OBSTACLES MPH, DRONE TO DRONE
+- Test with 1 drone flying and 1 not flying, DRONE TO DRONE
+- Test with 2 drone flying, DRONE TO DRONE
+
+iperf3 server 207
+iperf3 -s
+
+iperf3 client (run for 60s) 208
+iperf3 -c 192.168.65.207 -t 60
+
+Distances 
+3 -> 0.m 
+2 -> 7.7m
+1 -> 24.5m
+ 
+Results
+My computer to Drone 1 

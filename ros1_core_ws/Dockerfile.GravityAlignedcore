@@ -1,0 +1,26 @@
+# Start with the official ROS noetic base image
+FROM --platform=linux/arm64 ros:noetic-ros-base
+# FROM ros:noetic-ros-base
+
+WORKDIR /root
+RUN apt update
+RUN apt install vim git nano tmux ros-noetic-pcl-ros ros-noetic-vision-opencv ros-noetic-eigen-conversions ros-noetic-roslint ros-noetic-laser-geometry -y --no-install-recommends
+RUN git clone https://github.com/Livox-SDK/Livox-SDK2.git
+RUN git clone https://github.com/Livox-SDK/livox_ros_driver2.git livox/src/livox_ros_driver2
+RUN git clone https://github.com/Livox-SDK/Livox-SDK.git
+RUN git clone https://github.com/Livox-SDK/livox_ros_driver.git livox/src/livox_ros_driver
+WORKDIR /root/Livox-SDK2/build
+RUN cmake .. && make -j
+RUN make install
+WORKDIR /root/Livox-SDK/build
+RUN cmake .. && make
+RUN make install
+WORKDIR /root/livox/src/livox_ros_driver2
+RUN bash -c "source /opt/ros/noetic/setup.bash && ./build.sh ROS1"
+
+WORKDIR /root/sutd_ws/src/
+RUN git clone --recursive https://github.com/SanghyunPark01/FAST_LIO_gravity_align fast_lio_2/src/FAST_LIO
+WORKDIR /root/sutd_ws
+RUN bash -c "source /opt/ros/noetic/setup.bash && source /root/livox/devel/setup.bash && catkin_make"
+
+WORKDIR /root

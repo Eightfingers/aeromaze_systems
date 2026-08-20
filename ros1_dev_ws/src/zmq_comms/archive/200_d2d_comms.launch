@@ -1,0 +1,22 @@
+<launch>
+    <param name="x_offset" value="-2.0" />
+    <param name="y_offset" value="0.0" />
+    <param name="z_offset" value="0.0" />
+    <node pkg="zmq_comms" type="zmq_pub.py" name="comms_zmq_pub" output="screen">
+    </node>
+
+    <param name="goal_publisher_address" value="tcp://192.168.65.146:5555" />
+
+    <param name="other_drone_address1" value="tcp://192.168.65.199:5555" />
+    <param name="other_drone_address2" value="tcp://192.168.65.201:5555" />
+
+    <node pkg="zmq_comms" type="zmq_sub.py" name="comms_zmq_sub" output="screen">
+        <remap from="/other_drone1/global_position/pose" to="/drone_199/global_position/pose" />
+        <remap from="/other_drone1/global_position/odom" to="/drone_199/global_position/odom" />
+
+        <remap from="/other_drone2/global_position/pose" to="/drone_201/global_position/pose" />
+        <remap from="/other_drone2/global_position/odom" to="/drone_201/global_position/odom" />
+
+    </node>
+
+</launch>

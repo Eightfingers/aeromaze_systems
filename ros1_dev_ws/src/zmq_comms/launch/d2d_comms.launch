@@ -1,0 +1,9 @@
+<launch>
+
+    <node pkg="zmq_comms" type="zmq_pub.py" name="comms_zmq_pub" output="screen">
+    </node>
+
+    <node pkg="zmq_comms" type="dynamic_zmq_sub.py" name="comms_zmq_sub" output="screen">
+    </node>
+
+</launch>
