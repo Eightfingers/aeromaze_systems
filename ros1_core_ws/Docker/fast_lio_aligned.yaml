@@ -1,9 +1,12 @@
 services:
   fastlio_aligned:
-    image: eightfingers123/fast-lio-gravity-aligned:arm64
+    image: eightfingers123/aeromaze_systems_core_aligned:arm64
     container_name: fastlio_aligned
     ipc: host
     network_mode: host
-    command: bash -c "source ~/sutd_ws/devel/setup.bash && cd /sutd_ws/scripts/ && stdbuf -o L roslaunch aligned_mapping_mid360.launch"
     volumes:
-      - ./core_scripts/:/sutd_ws/scripts/
+      - ./core_scripts/:/root/scripts/
+      - ./core_configs/:/root/configs/
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+    command: bash -c "source /root/sutd_ws/devel/setup.bash && stdbuf -o L roslaunch /root/scripts/aligned_core.launch"

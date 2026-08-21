@@ -1,0 +1,13 @@
+services:
+  build_flight_manage:
+    image: eightfingers123/aeromaze_systems_dev:arm64
+    container_name: flight_manager
+    env_file:
+      - env/207.env
+    ipc: host
+    network_mode: host
+    volumes:
+      - ../src/flight_manage/:/mounted_workspace/src/flight_manage/
+      - ./catkin_make.sh:/catkin_make.sh
+
+    command: bash -c "source /workspace/devel/setup.bash && stdbuf -o L roslaunch flight_manage flight_manage.launch"
