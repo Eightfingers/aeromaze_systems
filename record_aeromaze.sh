@@ -1,6 +1,6 @@
 #!/bin/bash
 
-AGENT_ID="${AGENT_ID}"
+# AGENT_ID="${AGENT_ID}"
 
 # Record topics using the variable
 rosbag record \
@@ -21,7 +21,7 @@ rosbag record \
   /cpu_monitor/total_cpu \
   /livox/lidar \
   /livox/imu \
-  /mavros/imu/data \ 
+  /mavros/imu/data \
   /mavros/imu/data_raw \
   /realsense_lidar_detection_viz/detection_image \
   /veclocity_vector \
