@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Define the agent ID (change this to 003, 004, etc.)
-AGENT_ID="002"
+AGENT_ID="${AGENT_ID}"
 
 # Record topics using the variable
 rosbag record \
