@@ -60,7 +60,7 @@ class ExternalComms():
             if i >= 9: # Formatting stuff
                 odom_pub = rospy.Publisher(f"/agent0{i+1}/global_position/odom", Odometry, queue_size=10)
                 pose_pub = rospy.Publisher(f"/agent0{i+1}/global_position/pose", PoseStamped, queue_size=10)
-                offset_pub = rospy.Publisher(f"/agent0{i+1}/takeoff_offset", PoseStamped, queue_size=10)
+                offset_pub = rospy.Publisher(f"/agent0{i+1}/takeoff_offset", PoseStamped, queue_size=10, latch=True)
                 print(f"Created publishers for /agent0{i+1}")
                 self.pub_odom_lists.append(odom_pub)
                 self.pub_pose_lists.append(pose_pub)

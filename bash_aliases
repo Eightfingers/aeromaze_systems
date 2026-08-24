@@ -6,9 +6,9 @@ alias rosbaglivoxcamcalib='rosbag record /livox/lidar /livox/imu /cloud_register
 alias rosbagrecordaeromaze='bash /home/emnavi/Aeromaze/record_aeromaze.sh'
  
 #systems stuff
-alias cdsyscompose='cd /home/emnavi/Aeromaze/Autonomy/Systems/ros1_ws'
-alias up_sys_core='docker compose -f /home/emnavi/Aeromaze/Autonomy/Systems/ros1_ws/Docker/core_compose.yaml up'
-alias up_sys_dev='docker compose -f /home/emnavi/Aeromaze/Autonomy/Systems/ros1_ws/Docker/dev_compose.yaml up'
+alias cdsyscompose='cd ~/Aeromaze/Autonomy/aeromaze_systems/ros1_ws'
+alias up_sys_core='docker compose -f ~/Aeromaze/Autonomy/aeromaze_systems/ros1_core_ws/Docker/core_compose.yaml up'
+alias up_sys_dev='docker compose -f ~/Aeromaze/Autonomy/aeromaze_systems/ros1_dev_ws/Docker/dev_compose.yaml up'
 alias src.="source ~/.bashrc"
 alias echo_local='rostopic echo /mavros/local_position/pose'
 alias echo_vision='rostopic echo /mavros/vision_pose/pose'

@@ -15,6 +15,7 @@ class ZMQCommsPub:
         rospy.init_node('pose_publisher', anonymous=True)
         rospy.on_shutdown(self.shutdown_node)
 
+        self.agent_id = (os.environ['AGENT_ID'])
         print("Loading offsets from environment variables...")
         try:
             self.x_offset = float(os.environ['X_OFFSET'])
@@ -26,7 +27,11 @@ class ZMQCommsPub:
             sys.exit(1)
 
         self.mavros_local_sub = rospy.Subscriber('/mavros/local_position/pose', PoseStamped, self.pose_callback)
-        self.agent_takeoff_offset_sub = rospy.Subscriber(f"/drone_self/offset_pose", PoseStamped, self.agent_offset_cb)
+        # self.agent_takeoff_offset_sub = rospy.Subscriber(f"/drone_self/offset_pose", PoseStamped, self.agent_offset_cb)
+        if int(self.agent_id) > 9:
+            self.oneshot_offset_sub = rospy.Subscriber(f"/agent0{self.agent_id}/oneshot_localization_result", PoseStamped, self.agent_offset_cb)
+        else:
+            self.oneshot_offset_sub = rospy.Subscriber(f"/agent00{self.agent_id}/oneshot_localization_result", PoseStamped, self.agent_offset_cb)
         self.self_drone_pose_pub = rospy.Publisher("/drone_self/global_position/pose", PoseStamped, queue_size=10)
         self.self_drone_odom_pub = rospy.Publisher("/drone_self/global_position/odom", Odometry, queue_size=10)
 
@@ -74,6 +79,10 @@ class ZMQCommsPub:
 
         # Send serialized message over ZeroMQ
         message = b"Offset " + buffer.getvalue()  # Combine topic label and serialized message
+        x = msg.pose.position.x
+        y = msg.pose.position.y
+        z = msg.pose.position.z
+        rospy.loginfo(f"Obtained offset from oneshot localization, x: {x}, y: {y}, z: {z} sending over ZMQ")
         self.socket.send(message)  # Send raw bytes
 
     def shutdown_node(self):
