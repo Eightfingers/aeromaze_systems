@@ -6,6 +6,7 @@ services:
       - env/this.env
     ipc: host
     network_mode: host
+    volumes:
       - ../src/zmq_comms/launch:/workspace/src/zmq_comms/launch
       - ../src/zmq_comms/scripts:/workspace/src/zmq_comms/scripts
     command: bash -c "source /workspace/devel/setup.bash && stdbuf -o L roslaunch zmq_comms d2d_comms.launch"
