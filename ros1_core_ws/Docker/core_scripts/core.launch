@@ -1,6 +1,6 @@
 <launch>
     <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch"/>
-	<include file="/root/scripts/px4.launch"/> 
+	<include file="/root/scripts/this_px4.launch"/> 
 	<include file="/root/scripts/msg_MID360.launch"/>  
 	<include file="/root/scripts/mapping_mid360.launch"/>
 	<include file="/root/scripts/data_manager_start.launch"/>

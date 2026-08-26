@@ -7,14 +7,19 @@ rosbag record \
   /agent${AGENT_ID}/detection_results \
   /agent${AGENT_ID}/detection_results_raw \
   /agent001/global_position/pose \
-  /agent${AGENT_ID}/global_position/odom \
-  /agent${AGENT_ID}/global_position/pose \
+  /agent002/global_position/pose \
   /agent003/global_position/pose \
+  /agent001/global_position/odom \
+  /agent002/global_position/odom \
+  /agent003/global_position/odom \
   /agent${AGENT_ID}/grid_map/occupancy \
   /agent${AGENT_ID}/grid_map/occupancy_highres \
   /agent${AGENT_ID}/plan_array \
   /agent${AGENT_ID}/string \
   /agent${AGENT_ID}/waypoint \
+  /agent001/takeoff_offset \
+  /agent002/takeoff_offset \
+  /agent003/takeoff_offset \
   /drone_self/offset_pose \
   /fastlio_odom \
   /camera/color/image_raw_throttled \
@@ -37,3 +42,4 @@ rosbag record \
   /agent${AGENT_ID}/linear_velocity \
   /tf \
   /tf_static
+

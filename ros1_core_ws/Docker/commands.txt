@@ -2,6 +2,8 @@ build  (cross platform)
 docker run --privileged --rm tonistiigi/binfmt --install all
 docker buildx create --use
 
+docker build -f Dockerfile.dev -t eightfingers123/aeromaze_systems_dev:latest
+
 dev
 docker build -f Dockerfile.dev --platform linux/arm64/v8 . -t eightfingers123/aeromaze_systems_dev:arm64
 docker build -f Dockerfile.dev . -t eightfingers123/aeromaze_systems_dev:arm64

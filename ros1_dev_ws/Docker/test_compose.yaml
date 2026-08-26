@@ -1,0 +1,17 @@
+services:
+  comms:
+    image: eightfingers123/aeromaze_systems_dev:latest
+    container_name: test
+    env_file:
+      - env/this.env
+    ipc: host
+    network_mode: host
+    stdin_open: true # Equivalent to -i
+    tty: true        # Equivalent to -t
+    volumes:
+      - ../src/flight_manage/launch:/workspace/src/flight_manage/launch
+      - ../src/flight_manage/scripts:/workspace/src/flight_manage/scripts
+      - ../src/zmq_comms/launch:/workspace/src/zmq_comms/launch
+      - ../src/zmq_comms/scripts:/workspace/src/zmq_comms/scripts
+    command: bash -c "source /workspace/devel/setup.bash && stdbuf -o L roslaunch zmq_comms d2d_comms.launch"
+    # command: bash -c "source /workspace/devel/setup.bash && roscore"

@@ -1,6 +1,6 @@
 # Start with the official ROS noetic base image
-FROM --platform=linux/arm64 ros:noetic-ros-base
-# FROM ros:noetic-ros-base
+# FROM --platform=linux/arm64 ros:noetic-ros-base
+FROM ros:noetic-ros-base
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install necessary dependencies
@@ -38,6 +38,11 @@ COPY src/ /workspace/src
 # Build workspace
 WORKDIR /workspace
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
+
+# remove scripts and launch folder as it is to be dynamically mounted
+# Removing before catkin_make will cause an error?
+RUN rm -rf /workspace/src/flight_manage/scripts /workspace/src/flight_manage/launch
+RUN rm -rf /workspace/src/zmq_comms/scripts /workspace/src/zmq_comms/launch
 
 # Set up the workspace
 RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc && \

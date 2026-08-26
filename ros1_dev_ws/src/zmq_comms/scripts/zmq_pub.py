@@ -43,7 +43,7 @@ class ZMQCommsPub:
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PUB)
         self.socket.bind("tcp://*:5555")  # Publisher binds to port 5555
-        rospy.loginfo("Local socket is ready ")
+        rospy.loginfo("Local socket is ready!")
     
     def pose_callback(self, msg):
         # Create a BytesIO buffer for serialization

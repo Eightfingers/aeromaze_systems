@@ -5,3 +5,4 @@ logs/*
 .vscode/
 Docker/env/this.env
 Docker/core_configs/this_MID360_config.json
+Docker/core_configs/this_px4.json
