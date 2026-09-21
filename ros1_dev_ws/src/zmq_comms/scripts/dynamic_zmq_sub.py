@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Listens to ROS odom messages over ZMQ from other drones and republish it locally in ROS 
-# PARAMETERS ARE CONFIGURED USING ENV VARIABLES FOR EASY DOCKER USAGE INSTEAD OF LAUNCH FILES (?)
+# PARAMETERS ARE CONFIGURED USING ENV VARIABLES FOR EASY DOCKER USAGE INSTEAD OF ROS LAUNCH FILES (?)
 
 import zmq
 import rospy

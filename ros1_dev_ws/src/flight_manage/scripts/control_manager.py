@@ -139,7 +139,7 @@ class AgentStateManager:
         self.land_timer = rospy.Time.now()
         self.last_valid_cmd = rospy.Time.now()
 
-        # Loop Rate
+        # Loop Rate, loop at 40hz, print drone stats every 1 second.
         self.loop_rate = 40
         self.log_period = 40
         self.log_ticker = 0
@@ -311,28 +311,26 @@ class AgentStateManager:
             # Ensure that command to be sent is recent enough
             self.recent_command_flag = rospy.Time.now() - self.last_valid_cmd < rospy.Duration(1.0)
 
-            # Check for small vel
-            vx = self.input_commands.velocity.x
-            vy = self.input_commands.velocity.y
-            vz = self.input_commands.velocity.z
-            # Calculate magnitude
-            magnitude = math.sqrt(vx**2 + vy**2 + vz**2)
-            magnitude = 10
-            if (magnitude < SMALL_VEL_MAGNITUDE and self.agent_state == AGENT_STATES.RUNNING):
-                self.agent_state = AGENT_STATES.HOVERING
-                self.small_vel = True
-            else:
-                self.small_vel = False
+            ## Legacy code to Check for small velocity
+            # vx = self.input_commands.velocity.x
+            # vy = self.input_commands.velocity.y
+            # vz = self.input_commands.velocity.z
+            # magnitude = math.sqrt(vx**2 + vy**2 + vz**2)
+            # if (magnitude < SMALL_VEL_MAGNITUDE and self.agent_state == AGENT_STATES.RUNNING):
+            #     self.agent_state = AGENT_STATES.HOVERING
+            #     self.small_vel = True
+            # else:
+            #     self.small_vel = False
 
-            # Check which axis has smaller velocities
-            if (vx < SMALL_VEL_AXIS):
-                self.small_x_vel = True
-            else:
-                self.small_x_vel = False
-            if (vy < SMALL_VEL_AXIS):
-                self.small_y_vel = True
-            else:
-                self.small_y_vel = False
+            # # Check which axis has smaller velocities
+            # if (vx < SMALL_VEL_AXIS):
+            #     self.small_x_vel = True
+            # else:
+            #     self.small_x_vel = False
+            # if (vy < SMALL_VEL_AXIS):
+            #     self.small_y_vel = True
+            # else:
+            #     self.small_y_vel = False
 
     def print_stats(self):
         self.log_ticker += 1
@@ -340,10 +338,10 @@ class AgentStateManager:
             self.log_ticker = 0
             rospy.loginfo("PX4_STATE: {}, ARMED_STATE: {}, AGENT_STATE: {}".format(self.px4_current_state.mode, self.px4_current_state.armed, self.agent_state))
             rospy.loginfo("Velocity, X: {}, Y: {}, Z: {} -- Yaw: {}".format(self.input_commands.velocity.x, self.input_commands.velocity.y, self.input_commands.velocity.z, self.input_commands.yaw))
-            if (self.small_y_vel):
-                rospy.loginfo("Small Y Velocity detected! ")
-            if (self.small_x_vel):
-                rospy.loginfo("Small X Velocity detected!")
+            # if (self.small_y_vel):
+            #     rospy.loginfo("Small Y Velocity detected! ")
+            # if (self.small_x_vel):
+            #     rospy.loginfo("Small X Velocity detected!")
             if (not self.recent_command_flag and not self.small_vel and self.agent_state == AGENT_STATES.HOVERING):
                 rospy.loginfo("Hovering... Waiting for VALID or RECENT ENOUGH velocity commands to switch to RUNNING state")
             self.publisher_.publish(self.agent_state)

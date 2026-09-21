@@ -124,5 +124,6 @@ rosbag record \
   /mavros/local_position/pose \
   /mavros/local_position/velocity_local
 
+# record aligned topics
 rosbag record /aligned_fastlio_odometry /fastlio_odom /livox/imu \
 /mavros/imu/data /livox/lidar /mavros/vision_pose/pose /mavros/vision_pose/pose_aligned /mavros/local_position/pose /vrpn_client_node/UAV2/pose

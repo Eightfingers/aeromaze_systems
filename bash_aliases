@@ -12,4 +12,3 @@ alias up_sys_dev='docker compose -f ~/Aeromaze/Autonomy/aeromaze_systems/ros1_de
 alias src.="source ~/.bashrc"
 alias echo_local='rostopic echo /mavros/local_position/pose'
 alias echo_vision='rostopic echo /mavros/vision_pose/pose'
- 

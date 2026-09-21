@@ -4,6 +4,8 @@ import json
 import rospy
 from std_msgs.msg import String
 
+# JSON string send 
+
 rospy.init_node('fake_detection_pub', anonymous=True)
 
 sample = {

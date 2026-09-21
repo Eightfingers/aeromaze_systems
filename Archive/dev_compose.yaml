@@ -20,13 +20,13 @@ services:
     command: bash -c "source /workspace/devel/setup.bash && stdbuf -o L roslaunch flight_manage flight_manage.launch"
 
 
-  data_manager:
-    image: eightfingers123/aeromaze_systems_dev:arm64
-    container_name: data_manager
-    env_file:
-      - env/this.env
-    ipc: host
-    network_mode: host
-    volumes:
-      - ../:/mounted_workspace/
-    command: bash -c "source /workspace/devel/setup.bash && stdbuf -o L roslaunch data_manager aligned_manager_start.launch"
+  # data_manager:
+  #   image: eightfingers123/aeromaze_systems_dev:arm64
+  #   container_name: data_manager
+  #   env_file:
+  #     - env/this.env
+  #   ipc: host
+  #   network_mode: host
+  #   volumes:
+  #     - ../:/mounted_workspace/
+  #   command: bash -c "source /workspace/devel/setup.bash && stdbuf -o L roslaunch data_manager aligned_manager_start.launch"

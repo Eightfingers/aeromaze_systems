@@ -10,6 +10,8 @@ from geometry_msgs.msg import PoseStamped
 from mavros_msgs.msg import State
 from mavros_msgs.srv import CommandBool, CommandBoolRequest, SetMode, SetModeRequest
 
+# Mavros Offboardnode script from PX4 script
+
 current_state = State()
 
 def state_cb(msg):

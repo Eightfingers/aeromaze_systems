@@ -5,6 +5,7 @@ from geometry_msgs.msg import PoseStamped
 import io
 import time
 
+# This script is not used. Position setpoints is done by NUS
 # Run this script to publish setpoints to all drones on the Ground Control Computer!!!
 
 # STARLING 2 Camera POV

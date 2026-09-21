@@ -1,6 +1,8 @@
 import rospy
 from geometry_msgs.msg import TwistStamped
 
+# Simple script that publishes dummy linear vel
+
 rospy.init_node('twist_stamped_publisher', anonymous=True)
 
 rospy.loginfo("Twist Stamped publisher node started, waiting for messages...")

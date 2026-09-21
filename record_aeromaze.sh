@@ -42,4 +42,3 @@ rosbag record \
   /agent${AGENT_ID}/linear_velocity \
   /tf \
   /tf_static
-
