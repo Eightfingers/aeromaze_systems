@@ -89,8 +89,8 @@ class ZMQCommsClient():
         self.poller.register(self.goal_sub_socket, zmq.POLLIN)
 
         self.network_health_socket = self.context.socket(zmq.ROUTER)
-        self.network_health_socket.connect("tcp://{}:5556".format(self.ground_station_ip))
-        # self.network_health_socket.bind("tcp://127.0.0.1:5556")
+        # self.network_health_socket.connect("tcp://{}:5556".format(self.ground_station_ip))
+        self.network_health_socket.bind("tcp://127.0.0.1:5556")
         self.zmq_sockets_map[self.network_health_socket] = 1001 # the network health key-value pair dictionary!
         self.poller.register(self.network_health_socket, zmq.POLLIN)
 
