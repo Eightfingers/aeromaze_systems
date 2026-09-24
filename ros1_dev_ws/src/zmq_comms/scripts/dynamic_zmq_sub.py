@@ -82,16 +82,15 @@ class ZMQCommsClient():
         self.goal_sub_socket = self.context.socket(zmq.SUB)
         self.central_computer_address = "tcp://{}:5555".format(self.ground_station_ip)
         print("Listening to central computer at: " + self.central_computer_address)
-        # self.goal_sub_socket.connect(self.central_computer_address)
-        self.goal_sub_socket.connect("tcp://localhost:5555")
+        self.goal_sub_socket.connect(self.central_computer_address)
+        # self.goal_sub_socket.connect("tcp://localhost:5555")
         self.goal_sub_socket.setsockopt_string(zmq.SUBSCRIBE, "GoalPose")
         self.zmq_sockets_map[self.goal_sub_socket] = 1000 # The goal publisher key-value pair dictionary! used later on to identify which socket is being polled in
         self.poller.register(self.goal_sub_socket, zmq.POLLIN)
 
         self.network_health_socket = self.context.socket(zmq.ROUTER)
-        # self.network_health_socket.setsockopt_string(zmq.IDENTITY, f"agent_{self.agent_id}")
-        # self.network_health_socket.connect("tcp://{}:5556".format(self.ground_station_ip))
-        self.network_health_socket.bind("tcp://127.0.0.1:5556")
+        self.network_health_socket.connect("tcp://{}:5556".format(self.ground_station_ip))
+        # self.network_health_socket.bind("tcp://127.0.0.1:5556")
         self.zmq_sockets_map[self.network_health_socket] = 1001 # the network health key-value pair dictionary!
         self.poller.register(self.network_health_socket, zmq.POLLIN)
 
