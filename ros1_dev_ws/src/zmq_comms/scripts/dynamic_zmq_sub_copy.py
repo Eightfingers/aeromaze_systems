@@ -13,7 +13,7 @@ import os, sys
 import threading
 import time
 
-class ZMQCommsClient():
+class ExternalComms():
 
     def __init__(self):
         rospy.init_node('other_drone_odometry', anonymous=True)
@@ -52,7 +52,7 @@ class ZMQCommsClient():
         self.goal_pose_pub = rospy.Publisher("/move_base_simple/goal", PoseStamped, queue_size=10)
         self.take_off_pub = rospy.Publisher("/drone_self/state", String, queue_size=10)
         
-        # Initialize the other agent ros publishers
+        # Initialize the other agent ros publishers 
         self.pub_odom_lists: List[rospy.Publisher] = []
         self.pub_pose_lists: List[rospy.Publisher] = []
         self.pub_offset_lists: List[rospy.Publisher] = []
@@ -74,40 +74,29 @@ class ZMQCommsClient():
                 self.pub_pose_lists.append(pose_pub)
                 self.pub_offset_lists.append(offset_pub)
 
-        # Init ZMQ
+        # Init ZMQ 
         self.zmq_sockets_map = {}
         self.context = zmq.Context()
         self.poller = zmq.Poller()
-        #  Connect to Central Computer for goal poses and network health status
+        # Goal socket
         self.goal_sub_socket = self.context.socket(zmq.SUB)
-        self.central_computer_address = "tcp://{}:5555".format(self.ground_station_ip)
-        print("Listening to central computer at: " + self.central_computer_address)
-        # self.goal_sub_socket.connect(self.central_computer_address)
-        self.goal_sub_socket.connect("tcp://localhost:5555")
+        self.goal_publisher_address = "tcp://{}:5555".format(self.ground_station_ip)
+        print("Listening goal poses at: " + self.goal_publisher_address)
+        self.goal_sub_socket.connect(self.goal_publisher_address)
         self.goal_sub_socket.setsockopt_string(zmq.SUBSCRIBE, "GoalPose")
-        self.zmq_sockets_map[self.goal_sub_socket] = 1000 # The goal publisher key-value pair dictionary! used later on to identify which socket is being polled in
+        self.zmq_sockets_map[self.goal_sub_socket] = 1000 # THE GOAL PUBLISHER!!
         self.poller.register(self.goal_sub_socket, zmq.POLLIN)
-
-        self.network_health_socket = self.context.socket(zmq.ROUTER)
-        # self.network_health_socket.setsockopt_string(zmq.IDENTITY, f"agent_{self.agent_id}")
-        # self.network_health_socket.connect("tcp://{}:5556".format(self.ground_station_ip))
-        self.network_health_socket.bind("tcp://127.0.0.1:5556")
-        self.zmq_sockets_map[self.network_health_socket] = 1001 # the network health key-value pair dictionary!
-        self.poller.register(self.network_health_socket, zmq.POLLIN)
-
-        # Connect to other Agent sockets
+        # Agent sockets
         for i in range(self.num_pub_sub_pairs):
-            # Establish SUB sockets
             str_current_ip = self.str_first_second_third_octet + str(self.start_ip_fourth_octet + i)
-            agent_sub_socket = self.context.socket(zmq.SUB)
-            agent_sub_socket.setsockopt(zmq.LINGER, 0)
-            agent_sub_socket.setsockopt_string(zmq.SUBSCRIBE, f"Odometry")
-            agent_sub_socket.setsockopt_string(zmq.SUBSCRIBE, f"Offset")
-            agent_sub_socket.connect(f"tcp://{str_current_ip}:5555")
-            self.zmq_sockets_map[agent_sub_socket] = i
-            self.poller.register(agent_sub_socket, zmq.POLLIN)
-            print(f"ZMQ sub socket for tcp://{str_current_ip}:5555 is established")
-
+            agent_socket = self.context.socket(zmq.SUB)
+            agent_socket.setsockopt(zmq.LINGER, 0)
+            agent_socket.setsockopt_string(zmq.SUBSCRIBE, f"Odometry")
+            agent_socket.setsockopt_string(zmq.SUBSCRIBE, f"Offset")
+            agent_socket.connect(f"tcp://{str_current_ip}:5555")
+            self.zmq_sockets_map[agent_socket] = i
+            self.poller.register(agent_socket, zmq.POLLIN)
+            print(f"ZMQ socket for tcp://{str_current_ip}:5555 is established")
 
     def delayed_publish(self, msg):
         time.sleep(1)
@@ -136,14 +125,18 @@ class ZMQCommsClient():
             for sock, event in socks.items():
                 # Obtain the index of ZMQ socket that has a new data 
                 agent_index = self.zmq_sockets_map[sock]
-                # print("POLLIN")
-                # should be the rest of the topics
                 if event & zmq.POLLIN:
                     try:
-                        msg_in = sock.recv_multipart()
-                        if len(msg_in) == 2: # Pub sub data
-                            topic, serialized_data = msg_in
-                            # time_taken = rospy.Time.now() - pose_deserialized_msg.header.stamp
+                        message = sock.recv()
+                        topic, serialized_data = message.split(b" ", 1)  # Split by whitespace
+                        # time_taken = rospy.Time.now() - pose_deserialized_msg.header.stamp
+
+                        if agent_index == 1000:
+                            agent_state_msg = String()
+                            agent_state_msg.deserialize(serialized_data)
+                            threading.Thread(target=self.delayed_publish(agent_state_msg), daemon=True).start()
+                        else:
+                            # print(topic.decode())
                             if topic == b'Odometry':
                                 pose_deserialized_msg = PoseStamped()
                                 pose_deserialized_msg.deserialize(serialized_data)
@@ -157,19 +150,7 @@ class ZMQCommsClient():
                                 pose_deserialized_msg = PoseStamped()
                                 pose_deserialized_msg.deserialize(serialized_data)
                                 self.pub_offset_lists[agent_index].publish(pose_deserialized_msg)
-
-                            elif topic == b'GoalPose':
-                                agent_state_msg = String()
-                                agent_state_msg.deserialize(serialized_data)
-                                threading.Thread(target=self.delayed_publish(agent_state_msg), daemon=True).start()
-
-                        elif len(msg_in) == 3: # Router Dealer Data
-                            identity, topic, serialized_data = msg_in
-                            if topic == b"NetworkHealth":
-                                print(f"Received from {identity.decode()}: {topic.decode()} -> {serialized_data.decode()}")
-                                binary_str = f"agent_{self.agent_id}".encode('utf-8')
-                                print("Sending back Acknowledgement..")
-                                sock.send_multipart([identity, b"NetworkHealth", binary_str])
+                                pass
 
                     except zmq.ZMQError as e:
                         print("Recv error:", e)
@@ -179,5 +160,5 @@ class ZMQCommsClient():
         rospy.loginfo("Exiting!!!!")
 
 if __name__ == '__main__':
-    zmq_node = ZMQCommsClient()
+    zmq_node = ExternalComms()
     zmq_node.run_poller()

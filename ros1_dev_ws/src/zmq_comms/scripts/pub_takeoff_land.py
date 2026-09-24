@@ -39,8 +39,10 @@ class PosePublisher:
         msg.serialize(buffer)
         # serialized_msg = roslib.message.serialize_message(msg)D
         # Send serialized message over ZeroMQ
-        message = b"GoalPose " + buffer.getvalue()  # Combine topic label and serialized message
-        self.socket.send(message)  # Send raw bytes
+        # message = b"GoalPose " + buffer.getvalue()  # Combine topic label and serialized message
+        # self.socket.send(message)  # Send raw bytes
+
+        self.socket.send_multipart([b"GoalPose", buffer.getvalue()])
 
     def shutdown_node(self):
         print("Shutting down node")

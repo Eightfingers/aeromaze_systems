@@ -10,7 +10,7 @@ import os, sys
 # Reponsible for republishing mavros local position with offsets (therefore its global position) and over ZMQ to other drones
 # Odom and Pose contain the same data value its more for compatibility!!
 
-class ZMQCommsServer:
+class ZMQCommsPub:
     def __init__(self):
         rospy.init_node('pose_publisher', anonymous=True)
         rospy.on_shutdown(self.shutdown_node)
@@ -41,10 +41,10 @@ class ZMQCommsServer:
 
         # ZeroMQ setup
         self.context = zmq.Context()
-        self.pub_socket = self.context.socket(zmq.PUB)
-        self.pub_socket.bind("tcp://*:5555")  # Publisher binds to port 5555
+        self.socket = self.context.socket(zmq.PUB)
+        self.socket.bind("tcp://*:5555")  # Publisher binds to port 5555
         rospy.loginfo("Local socket is ready!")
-
+    
     def pose_callback(self, msg):
         # Create a BytesIO buffer for serialization
         buffer = io.BytesIO()
@@ -56,9 +56,12 @@ class ZMQCommsServer:
         
         if self.counter == self.counter_max:
             self.counter = 0
-            # Send serialized message over ZeroMQ
+            # Serialize the message into the buffer
             msg.serialize(buffer)
-            self.pub_socket.send_multipart([b"Odometry", buffer.getvalue()])
+
+            # Send serialized message over ZeroMQ
+            message = b"Odometry " + buffer.getvalue()  # Combine topic label and serialized message
+            self.socket.send(message)  # Send raw bytes
 
         # Publish self pose
         self.self_drone_pose_pub.publish(msg)
@@ -73,17 +76,20 @@ class ZMQCommsServer:
         buffer = io.BytesIO()
         # Serialize the message into the buffer
         msg.serialize(buffer)
-        self.pub_socket.send_multipart([b"Offset", buffer.getvalue()])
+
+        # Send serialized message over ZeroMQ
+        message = b"Offset " + buffer.getvalue()  # Combine topic label and serialized message
         x = msg.pose.position.x
         y = msg.pose.position.y
         z = msg.pose.position.z
         rospy.loginfo(f"Obtained offset from oneshot localization, x: {x}, y: {y}, z: {z} sending over ZMQ")
+        self.socket.send(message)  # Send raw bytes
 
     def shutdown_node(self):
         rospy.loginfo("Shutting down self pose publisher")
-        self.pub_socket.close()
+        self.socket.close()
         self.context.term()
 
 if __name__ == "__main__":
-    node = ZMQCommsServer()
+    node = ZMQCommsPub()
     rospy.spin()
