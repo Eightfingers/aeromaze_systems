@@ -1,10 +1,27 @@
+## Table of Contents
+
+- [Aeromaze Systems](#aeromaze-systems)
+- [Quick Start](#quick-start)
+- [Install](#install)
+- [First time set up](#first-time-set-up)
+- [Overview](#overview)
+  - [Hardware](#hardware)
+  - [Bash scripts](#bash-scripts)
+  - [Docker as a deployment mechanism](#docker-as-a-deployment-mechanism)
+  - [Docker images](#docker-images)
+  - [Updating](#updating)
+  - [Systems Core Image](#systems-core-image)
+    - [Core Mounted Docker folder and call hierarchy.](#core-mounted-docker-folder-and-call-hierarchy)
+  - [Systems-Dev image](#systems-dev-image)
+
+
 # Aeromaze Systems 
 
 The base Aeromaze systems consist of two docker images that provides basic autonomy functionalities of the X280 drone: This includes, localization, comms, flight management, visualization and bridging nodes. 
 
 # Quick Start
 
-2 bash aliases has been set up on the drone to provide a quick one way command to start the docker compose files. To run everything simply type the following commands (:
+2 bash aliases has been set up on the drone to provide a quick one way command to start the docker compose files. To run everything simply type the following commands :
 
 1) `roscore` (Start roscore first, to specifically pin roscore to a terminal)
 2) `up_sys_core` (Start the core of the system)
