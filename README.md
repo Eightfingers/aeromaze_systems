@@ -38,7 +38,7 @@ To install simply do a docker image pull:
 
 # First time set up 
 
-You can use Ansible to help you out (?) or you can just yolo and install the stuff one by one
+You can use Ansible to help you out not yet fully done (??) or you can just install the stuff one by one to each of the drone
 
 # Overview
 
